@@ -1,7 +1,6 @@
 # syntax=docker/dockerfile:1.9.0
 FROM ubuntu:latest
 
-ARG TARGETARCH
 ARG GIT_FILTER_VERSION=2.45.0
 ARG PWSH_VERSION=7.4.5
 ARG JAVA_VERSION=21-tem
@@ -56,6 +55,12 @@ RUN mkdir -p ~/.local/share/gh/extensions \
     && cd ~/.local/share/gh/extensions \
     && git clone https://github.com/mona-actions/gh-repo-stats \
     && git clone https://github.com/timrogers/gh-migration-audit \
+    && PROCESSOR_ARCHITECTURE=$(uname -m) \ 
+    && if [ "${PROCESSOR_ARCHITECTURE}" = "arm64" ] || [ "${PROCESSOR_ARCHITECTURE}" = "aarch64" ]; then\
+        export PLATFORM=arm64;\
+      else \
+        export PLATFORM=x64; \
+      fi\
     && cd gh-migration-audit \
-    && bash -c "export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && nvm install v18 && npm install && node build.js && npx pkg dist/migration-audit.cjs --out-path bin --targets node20-linux-$TARGETARCH" \
+    && bash -c "export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && nvm install v18 && npm install && node build.js && npx pkg dist/migration-audit.cjs --out-path bin --targets node20-linux-${PLATFORM}" \
     && cp bin/migration-audit ./gh-migration-audit
