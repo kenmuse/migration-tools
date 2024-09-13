@@ -40,11 +40,11 @@ RUN cd /tmp \
 # GH CLI
 RUN export DEBIAN_FRONTEND=noninteractive \
     && mkdir -p -m 755 /etc/apt/keyrings \
-	&& wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
-	&& chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
-	&& echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-	&& apt update \
-	&& apt-get install -y -qq gh \
+  && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+  && chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+  && apt update \
+  && apt-get install -y -qq gh \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -54,13 +54,21 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 RUN mkdir -p ~/.local/share/gh/extensions \
     && cd ~/.local/share/gh/extensions \
     && git clone https://github.com/mona-actions/gh-repo-stats \
-    && git clone https://github.com/timrogers/gh-migration-audit \
     && PROCESSOR_ARCHITECTURE=$(uname -m) \ 
     && if [ "${PROCESSOR_ARCHITECTURE}" = "arm64" ] || [ "${PROCESSOR_ARCHITECTURE}" = "aarch64" ]; then\
-        export PLATFORM=arm64;\
+        export PLATFORM=arm64\
+        && git clone https://github.com/timrogers/gh-migration-audit \
+        && cd gh-migration-audit \
+        && bash -c "export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && nvm install v18 && npm install && node build.js && npx pkg dist/migration-audit.cjs --out-path bin --targets node20-linux-${PLATFORM}" \
+        && cp bin/migration-audit ./gh-migration-audit;\
       else \
-        export PLATFORM=x64; \
-      fi\
-    && cd gh-migration-audit \
-    && bash -c "export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && nvm install v18 && npm install && node build.js && npx pkg dist/migration-audit.cjs --out-path bin --targets node20-linux-${PLATFORM}" \
-    && cp bin/migration-audit ./gh-migration-audit
+        export PLATFORM=x64 \
+        && mkdir gh-gei \
+        && curl -SLo gh-gei/gh-gei https://github.com/github/gh-gei/releases/download/latest/gei-linux-amd64 && chmod +x gh-gei/gh-gei \
+        && mkdir gh-ado2gh \
+        && curl -SLo gh-ado2gh/gh-ado2gh https://github.com/github/gh-ado2gh/releases/download/latest/ado2gh-linux-amd64 && chmod +x gh-ado2gh/gh-ado2gh \
+        && mkdir gh-bbs2gh \
+        && curl -SLo gh-bbs2gh/gh-bbs2gh https://github.com/github/gh-bbs2gh/releases/download/latest/bbs2gh-linux-amd64 && chmod +x gh-bbs2gh/gh-bbs2gh \
+        && mkdir gh-migration-audit \
+        && curl -sLo gh-migration-audit/gh-migration-audit https://github.com/timrogers/gh-migration-audit/releases/download/latest/gh-migration-audit-linux-amd64 && chmod +x gh-migration-audit/gh-migration-audit; \
+      fi
