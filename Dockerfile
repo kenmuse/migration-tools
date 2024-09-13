@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.9.0
 FROM ubuntu:latest
 
 ARG TARGETARCH
@@ -56,5 +57,5 @@ RUN mkdir -p ~/.local/share/gh/extensions \
     && git clone https://github.com/mona-actions/gh-repo-stats \
     && git clone https://github.com/timrogers/gh-migration-audit \
     && cd gh-migration-audit \
-    && bash -c "export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && nvm install v18 && npm install && node build.js && npx pkg dist/migration-audit.cjs --out-path bin --targets node20-linux-${TARGETARCH}" \
+    && bash -c "export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && nvm install v18 && npm install && node build.js && npx pkg dist/migration-audit.cjs --out-path bin --targets node20-linux-$TARGETARCH" \
     && cp bin/migration-audit ./gh-migration-audit
