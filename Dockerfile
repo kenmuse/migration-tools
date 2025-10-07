@@ -2,9 +2,9 @@
 FROM ubuntu:latest
 
 ARG GIT_FILTER_VERSION=2.45.0
-ARG PWSH_VERSION=7.4.5
+ARG PWSH_VERSION=7.5.3
 ARG JAVA_VERSION=21-tem
-ARG NVM_VERSION=0.39.3
+ARG NVM_VERSION=0.40.3
 ARG NODE_VERSION=22
 ARG BFG_VERSION=1.14.0
 
@@ -20,9 +20,10 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 RUN curl -s "https://get.sdkman.io" | bash \
   && curl -s https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/install.sh | bash \
   && bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install java ${JAVA_VERSION}" \
-  && bash -c "export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && nvm install v${NODE_VERSION} && npm install -g npm@latest" \
-  && dotnet tool install --global PowerShell \
-  && echo 'export PATH="$PATH:/root/.dotnet/tools"' >> ~/.bash_profile
+  && bash -c "export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && nvm install v${NODE_VERSION} && npm install -g npm@latest"
+
+RUN dotnet tool install --global PowerShell \
+    && echo 'export PATH="$PATH:/root/.dotnet/tools"' >> ~/.bash_profile
 
 # BFG Jar
 RUN mkdir /usr/local/bin/bfg-app \
