@@ -22,10 +22,11 @@ RUN curl -s "https://get.sdkman.io" | bash \
   && bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install java ${JAVA_VERSION}" \
   && bash -c "export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && nvm install v${NODE_VERSION} && npm install -g npm@latest"
 
-RUN if [ "${PROCESSOR_ARCHITECTURE}" = "arm64" ] || [ "${PROCESSOR_ARCHITECTURE}" = "aarch64" ]; then\
-      curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VERSION}/powershell-${PWSH_VERSION}-linux-arm64.tar.gz; \
+RUN PROCESSOR_ARCHITECTURE=$(uname -m) \
+    && if [ "${PROCESSOR_ARCHITECTURE}" = "arm64" ] || [ "${PROCESSOR_ARCHITECTURE}" = "aarch64" ]; then\
+      curl -sSLo /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VERSION}/powershell-${PWSH_VERSION}-linux-arm64.tar.gz; \
     else \
-      curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VERSION}/powershell-${PWSH_VERSION}-linux-amd64.tar.gz; \
+      curl -sSLo /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VERSION}/powershell-${PWSH_VERSION}-linux-x64.tar.gz; \
     fi \
     && mkdir -p /opt/microsoft/powershell/7 \
     && tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
