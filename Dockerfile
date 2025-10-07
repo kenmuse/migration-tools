@@ -30,7 +30,7 @@ RUN if [ "${PROCESSOR_ARCHITECTURE}" = "arm64" ] || [ "${PROCESSOR_ARCHITECTURE}
       && sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh \
     else \
       dotnet tool install --global PowerShell \
-      && echo 'export PATH="$PATH:/root/.dotnet/tools"' >> ~/.bash_profile
+      && echo 'export PATH="$PATH:/root/.dotnet/tools"' >> ~/.bash_profile \
     fi
 
 # BFG Jar
