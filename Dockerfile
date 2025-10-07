@@ -23,15 +23,14 @@ RUN curl -s "https://get.sdkman.io" | bash \
   && bash -c "export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && nvm install v${NODE_VERSION} && npm install -g npm@latest"
 
 RUN if [ "${PROCESSOR_ARCHITECTURE}" = "arm64" ] || [ "${PROCESSOR_ARCHITECTURE}" = "aarch64" ]; then\
-      curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VERSION}/powershell-${PWSH_VERSION}-linux-arm64.tar.gz \
-      && sudo mkdir -p /opt/microsoft/powershell/7 \
-      && sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
-      && sudo chmod +x /opt/microsoft/powershell/7/pwsh \
-      && sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh; \
+      curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VERSION}/powershell-${PWSH_VERSION}-linux-arm64.tar.gz; \
     else \
-      dotnet tool install --global PowerShell \
-      && echo 'export PATH="$PATH:/root/.dotnet/tools"' >> ~/.bash_profile; \
-    fi
+      curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VERSION}/powershell-${PWSH_VERSION}-linux-amd64.tar.gz; \
+    fi \
+    && sudo mkdir -p /opt/microsoft/powershell/7 \
+    && sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
+    && sudo chmod +x /opt/microsoft/powershell/7/pwsh \
+    && sudo ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh \
 
 # BFG Jar
 RUN mkdir /usr/local/bin/bfg-app \
