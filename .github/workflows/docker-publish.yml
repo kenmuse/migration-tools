@@ -87,7 +87,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: mode=max
-          sbom: true
+          # sbom: true
           platforms: linux/arm64,linux/amd64
 
       # Sign the resulting Docker image digest except on PRs.
